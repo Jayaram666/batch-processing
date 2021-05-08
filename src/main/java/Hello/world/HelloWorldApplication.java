@@ -27,11 +27,16 @@ public class HelloWorldApplication {
 	private JobBuilderFactory jobs;
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
+	@Autowired
+	private HWJobExecutionListner hwJobExecutionListner;
+	@Autowired
+	private HWStepExecutionListner hwStepExecutionListner;
 
 	public Step step1(){
 
 		return stepBuilderFactory.get("step1").
 				tasklet(helloWorldtasklet()).
+				listener(hwStepExecutionListner).
 				build();
 	}
 
@@ -39,6 +44,7 @@ public class HelloWorldApplication {
 	public Job job() {
 		return jobs
 				.get("taskletsJob")
+				.listener(hwJobExecutionListner)
 				.start(step1())
 				.build();
 	}
@@ -47,7 +53,7 @@ public class HelloWorldApplication {
 		return (new Tasklet() {
 			@Override
 			public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-				System.out.println("Hello world ........");
+				System.out.println("Hello world ..............");
 				return RepeatStatus.FINISHED;
 			}
 		});
